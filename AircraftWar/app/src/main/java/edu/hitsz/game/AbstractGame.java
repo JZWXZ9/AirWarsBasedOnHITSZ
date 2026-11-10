@@ -27,8 +27,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -58,6 +60,7 @@ public abstract class AbstractGame extends Pane {
 
     protected Random random = new Random();
     protected MusicThread musicThread;
+    private final Map<MusicEnums, MusicThread> activeSoundEffects = new EnumMap<>(MusicEnums.class);
 
     protected int score = 0;
     protected boolean gameOverFlag = false;
@@ -321,8 +324,13 @@ public abstract class AbstractGame extends Pane {
         return !bossList.isEmpty();
     }
 
-    protected void playSound(MusicEnums music) {
+    protected synchronized void playSound(MusicEnums music) {
+        MusicThread active = activeSoundEffects.get(music);
+        if (active != null && active.isAlive()) {
+            return;
+        }
         MusicThread sound = new MusicThread(music.getPath(), false);
+        activeSoundEffects.put(music, sound);
         sound.start();
     }
 

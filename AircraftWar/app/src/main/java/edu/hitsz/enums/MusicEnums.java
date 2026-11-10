@@ -2,7 +2,7 @@ package edu.hitsz.enums;
 
 public enum MusicEnums {
     BGM("bgm", "/videos/bgm.wav"),
-    BGM_BOSS("bossBgm", "/videos/bgm_boss.wav"),
+    BGM_BOSS("bossBgm", "/videos/jevil_world_revolving.wav"),
     BOMB_EXPLOSION("bombExplosion", "/videos/bomb_explosion.wav"),
     BULLET_HIT("bulletHit", "/videos/bullet_hit.wav"),
     GAME_OVER("gameOver", "/videos/game_over.wav"),
@@ -17,6 +17,9 @@ public enum MusicEnums {
     }
 
     public String getPath() {
+        if (this == BGM_BOSS && MusicEnums.class.getResource(path) == null) {
+            return "/videos/bgm_boss.wav";
+        }
         return this.path;
     }
 

@@ -4,12 +4,16 @@
 
 # IDE and compiler output
 **/.idea/
+**/.vscode/
 **/out/
 **/*.iml
 *.class
 
 # Local game records (created and updated while playing)
 /AircraftWar/app/resources/records/*.csv
+
+# Extracted local copy of DELTARUNE's Jevil battle music (do not redistribute)
+/AircraftWar/app/src/main/resources/videos/jevil_world_revolving.wav
 
 # Redundant packaged source archive
 /AircraftWar/app/src/main/java/edu/hitsz.zip
