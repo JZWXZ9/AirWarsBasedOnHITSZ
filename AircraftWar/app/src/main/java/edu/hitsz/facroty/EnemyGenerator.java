@@ -39,4 +39,10 @@ public class EnemyGenerator {
         }
         return enemy;
     }
+
+    public void resetForNewRun() {
+        for (AbstractEnemyFactory factory : FACTORY) {
+            factory.resetForNewRun();
+        }
+    }
 }

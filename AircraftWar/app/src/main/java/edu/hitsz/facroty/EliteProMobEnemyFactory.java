@@ -14,18 +14,18 @@ public class EliteProMobEnemyFactory extends AbstractEnemyFactory{
         this.speedY = 2;
         this.hp = 5000;
         this.maxSpawnProbability = 20;
+        rememberBaseStats();
     }
 
     @Override
     public AbstractEnemyAircraft createEnemy() {
-        {
-            return new EliteProMobEnemy(
-                    (int) (random.nextDouble() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                    (int) (random.nextDouble() * Main.WINDOW_HEIGHT * 0.05),
-                    random.nextInt(5) - random.nextInt(5),
-                    speedY,
-                    hp);
-        }
+        int randomHorizontalSpeed = random.nextInt(5) - random.nextInt(5);
+        return new EliteProMobEnemy(
+                (int) (random.nextDouble() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
+                (int) (random.nextDouble() * Main.WINDOW_HEIGHT * 0.05),
+                scaleSpeedX(randomHorizontalSpeed),
+                scaleSpeedY(),
+                hp);
     }
 }
 

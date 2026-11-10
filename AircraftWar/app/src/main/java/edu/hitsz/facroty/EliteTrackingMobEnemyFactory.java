@@ -13,17 +13,16 @@ public class EliteTrackingMobEnemyFactory extends AbstractEnemyFactory{
         this.speedX = 0;
         this.speedY = 10;
         this.hp = 300;
+        rememberBaseStats();
     }
 
     @Override
     public AbstractEnemyAircraft createEnemy() {
-        {
-            return new EliteTrackingMobEnemy(
-                    (int) (random.nextDouble() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                    (int) (random.nextDouble() * Main.WINDOW_HEIGHT * 0.05),
-                    speedX,
-                    speedY,
-                    hp);
-        }
+        return new EliteTrackingMobEnemy(
+                (int) (random.nextDouble() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
+                (int) (random.nextDouble() * Main.WINDOW_HEIGHT * 0.05),
+                speedX,
+                speedY,
+                hp);
     }
 }

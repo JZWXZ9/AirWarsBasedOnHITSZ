@@ -1,6 +1,5 @@
 package edu.hitsz.ui;
 
-import edu.hitsz.application.Main;
 import edu.hitsz.enums.DifficultyEnums;
 import edu.hitsz.enums.SceneEnums;
 import javafx.fxml.FXML;
@@ -21,6 +20,17 @@ public class DifficultyController {
 
     @FXML
     private Button Hard;
+
+    @FXML
+    private void initialize() {
+        Button selected = switch (manager.getDifficulty()) {
+            case PEACEFUL -> Peaceful;
+            case EASY -> Easy;
+            case NORMAL -> Normal;
+            case HARD -> Hard;
+        };
+        selected.getStyleClass().add("selected-mode");
+    }
 
     @FXML
     public void setDifficultyPeaceful() throws IOException {
@@ -46,6 +56,7 @@ public class DifficultyController {
         returnToInitialScene();
     }
 
+    @FXML
     public void returnToInitialScene() throws IOException {
         manager.switchTo(SceneEnums.INITIAL_CHOICE);
     }

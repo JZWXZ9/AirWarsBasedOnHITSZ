@@ -1,0 +1,142 @@
+.menu-screen {
+    -fx-background-color: linear-gradient(to bottom, #101d31 0%, #0a1220 56%, #070b14 100%);
+    -fx-font-family: "Segoe UI";
+}
+
+.ambient-ring {
+    -fx-fill: rgba(46, 115, 170, 0.035);
+    -fx-stroke: rgba(91, 183, 235, 0.12);
+    -fx-stroke-width: 1.2px;
+}
+
+.screen-overline {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #76c7e8;
+}
+
+.screen-title {
+    -fx-font-size: 52px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #f4f7fc;
+}
+
+.compact-title {
+    -fx-font-size: 34px;
+}
+
+.screen-subtitle {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8b9bad;
+}
+
+.left-subtitle {
+    -fx-font-size: 10px;
+}
+
+.status-card {
+    -fx-padding: 20px 21px 20px 21px;
+    -fx-background-color: rgba(14, 27, 45, 0.93);
+    -fx-background-radius: 14px;
+    -fx-border-color: rgba(127, 190, 219, 0.18);
+    -fx-border-radius: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 18, 0.18, 0, 7);
+}
+
+.card-caption {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8092a7;
+}
+
+.mode-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #effbff;
+}
+
+.primary-button {
+    -fx-background-color: linear-gradient(to right, #32b8ce, #39a9dc);
+    -fx-background-radius: 10px;
+    -fx-text-fill: #07111c;
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(29, 174, 212, 0.22), 15, 0.2, 0, 4);
+}
+
+.primary-button:hover {
+    -fx-background-color: linear-gradient(to right, #64e0e8, #70c7fb);
+}
+
+.secondary-button {
+    -fx-background-color: rgba(35, 57, 78, 0.82);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(130, 184, 211, 0.24);
+    -fx-border-radius: 8px;
+    -fx-text-fill: #c5d8e6;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #263f58;
+    -fx-text-fill: white;
+}
+
+.control-hint {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #a6b8c7;
+}
+
+.footer-note {
+    -fx-font-size: 9px;
+    -fx-text-fill: #647487;
+}
+
+.back-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #9cb2c5;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.back-button:hover {
+    -fx-text-fill: #e6f7ff;
+}
+
+.difficulty-list {
+    -fx-padding: 10px 0 10px 0;
+}
+
+.difficulty-card {
+    -fx-padding: 13px 20px 13px 20px;
+    -fx-background-color: rgba(16, 30, 49, 0.94);
+    -fx-background-radius: 12px;
+    -fx-border-color: rgba(118, 151, 178, 0.20);
+    -fx-border-radius: 12px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 12, 0.12, 0, 4);
+}
+
+.difficulty-card:hover,
+.difficulty-card.selected-mode {
+    -fx-background-color: rgba(22, 46, 67, 0.98);
+    -fx-border-color: #49c6de;
+    -fx-effect: dropshadow(gaussian, rgba(48, 190, 222, 0.20), 14, 0.15, 0, 3);
+}
+
+.difficulty-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #e8f2fb;
+}
+
+.difficulty-description {
+    -fx-font-size: 11px;
+    -fx-text-fill: #92a5b8;
+}

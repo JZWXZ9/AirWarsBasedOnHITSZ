@@ -13,7 +13,6 @@ public class HardGame extends AbstractGame {
     // 难度递进参数
     private double originalEnemySpawnCycle;
     private double originalHeroShootCycle;
-    private int bossSpawnCount = 0;
 
     private static final double MIN_SPAWN_CYCLE = 6;
     private static final double MAX_HERO_SHOOT_CYCLE = 3;
@@ -24,8 +23,8 @@ public class HardGame extends AbstractGame {
         this.enemyMaxNumber = 8;
         this.enemySpawnCycle = 18;
         this.originalEnemySpawnCycle = 18;
-        this.heroShootCycle = 2.5;
         this.originalHeroShootCycle = 2;
+        this.heroShootCycle = originalHeroShootCycle;
         this.bossSpawnScore = 15000;
         this.allowBoss = true;
         this.difficulty = DifficultyEnums.HARD;
@@ -34,18 +33,19 @@ public class HardGame extends AbstractGame {
 
     @Override
     protected void updateDifficultyProgression() {
-        int newLevel = score / PROGRESSION_SCORE_INTERVAL;
+        int newLevel = Math.max(1, score / PROGRESSION_SCORE_INTERVAL + 1);
 
         if (newLevel > difficultyFactor) {
             difficultyFactor = newLevel;
 
-            double newSpawnCycle = originalEnemySpawnCycle - difficultyFactor * 1.5;
+            int progressionSteps = difficultyFactor - 1;
+            double newSpawnCycle = originalEnemySpawnCycle - progressionSteps * 1.5;
             if (newSpawnCycle < MIN_SPAWN_CYCLE) {
                 newSpawnCycle = MIN_SPAWN_CYCLE;
             }
             enemySpawnCycle = newSpawnCycle;
 
-            double newHeroCycle = originalHeroShootCycle + difficultyFactor * 0.2;
+            double newHeroCycle = originalHeroShootCycle + progressionSteps * 0.2;
             if (newHeroCycle > MAX_HERO_SHOOT_CYCLE) {
                 newHeroCycle = MAX_HERO_SHOOT_CYCLE;
             }

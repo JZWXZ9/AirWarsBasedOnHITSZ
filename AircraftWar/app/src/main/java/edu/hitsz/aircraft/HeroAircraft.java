@@ -51,6 +51,20 @@ public class HeroAircraft extends AbstractAircraft {
         // 英雄机由鼠标控制，不通过forward函数移动
     }
 
+    public void resetForNewRun() {
+        maxHp = 500;
+        hp = maxHp;
+        shootNum = 1;
+        power = 30;
+        direction = -1;
+        setShootStrategy(List.of(new StraightShoot(this)));
+        isInvincible = false;
+        invincibleTime = 0;
+        expectedInvincibleTime = 0;
+        setLocation(Main.WINDOW_WIDTH / 2.0,
+                Main.WINDOW_HEIGHT - ImageManager.HERO_IMAGE.getHeight());
+    }
+
 
 
     // 加血

@@ -1,46 +1,45 @@
 package edu.hitsz.facroty;
 
 import edu.hitsz.aircraft.AbstractEnemyAircraft;
-import edu.hitsz.aircraft.BossEnemy;
-import edu.hitsz.aircraft.EliteMobEnemy;
-import edu.hitsz.application.ImageManager;
+import edu.hitsz.aircraft.AbstractBossEnemy;
 import edu.hitsz.application.Main;
 import edu.hitsz.enums.DifficultyEnums;
 
 public class BossFactory extends AbstractEnemyFactory{
-    private static int bossCount = 1;
-    private DifficultyEnums difficulty;
-    private int origHp;
+    private static final double HARD_HP_INCREASE_PER_ENCOUNTER = 0.08;
+    private static final double HARD_HP_INCREASE_CAP = 0.30;
+
+    private final BossDefinition definition;
+
     public BossFactory(DifficultyEnums difficulty) {
+        this(difficulty, 1);
+    }
+
+    public BossFactory(DifficultyEnums difficulty, int encounterNumber) {
         this.probabilityForEnemySpawning = 100;
         this.defaultSpawningProbability = 100;
         this.probabilityIncrement = 0;
         this.speedX = random.nextInt(3,8);
         this.speedY = 0;
-        this.hp = 10000;
-        this.origHp = this.hp;
-        this.difficulty = difficulty;
+        this.definition = BossCatalog.forEncounter(encounterNumber);
+        double hardIncrease = Math.min(HARD_HP_INCREASE_CAP,
+                Math.max(0, encounterNumber - 1) * HARD_HP_INCREASE_PER_ENCOUNTER);
+        this.hp = (int) Math.round(definition.baseHp()
+                * (difficulty == DifficultyEnums.HARD ? 1.0 + hardIncrease : 1.0));
     }
 
     @Override
     public AbstractEnemyAircraft createEnemy() {
-        {
-            bossCount++;
-            return new BossEnemy(
-                    (int) (random.nextDouble() * (Main.WINDOW_WIDTH - ImageManager.BOSS_ENEMY_IMAGE.getWidth())),
-                    (int) (random.nextDouble() * Main.WINDOW_HEIGHT * 0.05),
-                    speedX,
-                    speedY,
-                    hp);
-        }
+        int y = (int) (random.nextDouble() * Main.WINDOW_HEIGHT * 0.05);
+        AbstractBossEnemy boss = definition.creator().create(0, y, speedX, speedY, hp);
+        int maxX = Math.max(0, Main.WINDOW_WIDTH - boss.getWidth());
+        boss.setLocation((int) (random.nextDouble() * (maxX + 1)), y);
+        return boss;
     }
 
-    // 更改逻辑，不采用difficultyFactor因子计算
     @Override
     protected void checkDifficultyFactorAndUpdate(int difficultyFactor) {
-        if(this.difficulty == DifficultyEnums.HARD) {
-            this.hp = (int)(this.origHp + bossCount*0.2);
-        }
+        // Boss health is determined by the encounter number, not spawn-attempt level.
     }
 }
 

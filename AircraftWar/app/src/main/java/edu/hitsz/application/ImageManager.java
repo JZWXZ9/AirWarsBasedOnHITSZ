@@ -42,7 +42,7 @@ public class ImageManager {
     public static Image ELITE_MOB_ENEMY_IMAGE;
     public static Image ELITE_PRO_MOB_ENEMY_IMAGE;
     public static Image ELITE_PLUS_MOB_ENEMY_IMAGE;
-    public static Image BOSS_ENEMY_IMAGE;
+    public static Image JEVIL_BOSS_IMAGE;
 
     public static Image BLOOD_PROP;
     public static Image BOMB_PROP;
@@ -63,7 +63,7 @@ public class ImageManager {
             ELITE_MOB_ENEMY_IMAGE = loadFromResources("/images/elite.png");
             ELITE_PRO_MOB_ENEMY_IMAGE = loadFromResources("/images/elitePro.png");
             ELITE_PLUS_MOB_ENEMY_IMAGE = loadFromResources("/images/elitePlus.png");
-            BOSS_ENEMY_IMAGE = loadFromResources("/images/boss.png");
+            JEVIL_BOSS_IMAGE = JevilBossImage.createImage();
 
             HERO_BULLET_IMAGE = loadFromResources("/images/bullet_hero.png");
             ENEMY_BULLET_IMAGE = loadFromResources("/images/bullet_enemy.png");
@@ -81,7 +81,7 @@ public class ImageManager {
             CLASSNAME_IMAGE_MAP.put(EliteTrackingMobEnemy.class.getName(), ELITE_MOB_ENEMY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(EliteProMobEnemy.class.getName(), ELITE_PRO_MOB_ENEMY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(ElitePlusMobEnemy.class.getName(), ELITE_PLUS_MOB_ENEMY_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(BossEnemy.class.getName(), BOSS_ENEMY_IMAGE);
+            CLASSNAME_IMAGE_MAP.put(JevilBoss.class.getName(), JEVIL_BOSS_IMAGE);
 
             CLASSNAME_IMAGE_MAP.put(HeroBullet.class.getName(), HERO_BULLET_IMAGE);
             CLASSNAME_IMAGE_MAP.put(EnemyBullet.class.getName(), ENEMY_BULLET_IMAGE);

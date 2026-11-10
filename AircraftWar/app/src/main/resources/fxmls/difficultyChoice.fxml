@@ -3,35 +3,77 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 
+<AnchorPane prefHeight="768.0" prefWidth="512.0" styleClass="menu-screen" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.hitsz.ui.DifficultyController">
+    <children>
+        <Circle layoutX="-70.0" layoutY="680.0" radius="210.0" styleClass="ambient-ring" />
+        <Circle layoutX="520.0" layoutY="120.0" radius="170.0" styleClass="ambient-ring" />
+        <VBox alignment="TOP_CENTER" prefHeight="684.0" prefWidth="420.0" spacing="16.0" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="46.0" AnchorPane.rightAnchor="46.0" AnchorPane.topAnchor="42.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefWidth="420.0" spacing="12.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#returnToInitialScene" styleClass="back-button" text="‹  BACK" />
+                        <Label styleClass="screen-overline" text="MISSION SELECT" />
+                    </children>
+                </HBox>
 
-<AnchorPane prefHeight="768.0" prefWidth="512.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.hitsz.ui.DifficultyController">
-   <children>
-      <Label alignment="CENTER" layoutX="31.0" layoutY="51.0" prefWidth="450.0" text="Please Choose The Difficulty">
-         <font>
-            <Font size="30.0" />
-         </font>
-      </Label>
-      <Button fx:id="Peaceful" layoutX="196.0" layoutY="180.0" mnemonicParsing="false" onAction="#setDifficultyPeaceful" prefWidth="120.0" text="Peaceful">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Button>
-      <Button fx:id="Easy" layoutX="196.0" layoutY="320.0" mnemonicParsing="false" onAction="#setDifficultyEasy" prefWidth="120.0" text="Easy">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Button>
-      <Button fx:id="Normal" layoutX="196.0" layoutY="460.0" mnemonicParsing="false" onAction="#setDifficultyNormal" prefWidth="120.0" text="Normal">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Button>
-      <Button fx:id="Hard" layoutX="196.0" layoutY="600.0" mnemonicParsing="false" onAction="#setDifficultyHard" prefWidth="120.0" text="Hard">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Button>
-   </children>
+                <VBox alignment="CENTER_LEFT" spacing="6.0">
+                    <children>
+                        <Label styleClass="screen-title compact-title" text="CHOOSE YOUR MODE" />
+                        <Label styleClass="screen-subtitle left-subtitle" text="PICK A PACE THAT FEELS RIGHT." />
+                    </children>
+                </VBox>
+
+                <VBox alignment="CENTER" spacing="13.0" styleClass="difficulty-list">
+                    <children>
+                        <Button fx:id="Peaceful" alignment="CENTER_LEFT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#setDifficultyPeaceful" prefHeight="82.0" prefWidth="388.0" styleClass="difficulty-card">
+                            <graphic>
+                                <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label styleClass="difficulty-name" text="PEACEFUL" />
+                                        <Label styleClass="difficulty-description" text="A calm flight to learn the controls." />
+                                    </children>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="Easy" alignment="CENTER_LEFT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#setDifficultyEasy" prefHeight="82.0" prefWidth="388.0" styleClass="difficulty-card">
+                            <graphic>
+                                <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label styleClass="difficulty-name" text="EASY" />
+                                        <Label styleClass="difficulty-description" text="A forgiving pace with room to recover." />
+                                    </children>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="Normal" alignment="CENTER_LEFT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#setDifficultyNormal" prefHeight="82.0" prefWidth="388.0" styleClass="difficulty-card">
+                            <graphic>
+                                <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label styleClass="difficulty-name" text="NORMAL" />
+                                        <Label styleClass="difficulty-description" text="A steady challenge with boss encounters." />
+                                    </children>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="Hard" alignment="CENTER_LEFT" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#setDifficultyHard" prefHeight="82.0" prefWidth="388.0" styleClass="difficulty-card">
+                            <graphic>
+                                <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label styleClass="difficulty-name" text="HARD" />
+                                        <Label styleClass="difficulty-description" text="Faster pressure and more demanding fights." />
+                                    </children>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                    </children>
+                </VBox>
+
+                <Label styleClass="footer-note" text="YOU CAN CHANGE MODES BETWEEN MISSIONS" />
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>

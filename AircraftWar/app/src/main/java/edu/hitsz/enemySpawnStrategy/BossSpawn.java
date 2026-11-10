@@ -13,9 +13,13 @@ public class BossSpawn extends AbstractSpawnStrategy{
     private DifficultyEnums difficulty;
 
     public BossSpawn(DifficultyEnums difficulty) {
+        this(difficulty, 1);
+    }
+
+    public BossSpawn(DifficultyEnums difficulty, int encounterNumber) {
         super();
         this.difficulty = difficulty;
-        bossGenerator = new BossFactory(this.difficulty);
+        bossGenerator = new BossFactory(this.difficulty, encounterNumber);
     }
 
     @Override

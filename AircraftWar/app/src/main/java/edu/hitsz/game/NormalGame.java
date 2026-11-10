@@ -29,13 +29,14 @@ public class NormalGame extends AbstractGame {
 
     @Override
     protected void updateDifficultyProgression() {
-        int newLevel = score / PROGRESSION_SCORE_INTERVAL;
+        int newLevel = Math.max(1, score / PROGRESSION_SCORE_INTERVAL + 1);
 
         if (newLevel > difficultyFactor) {
             difficultyFactor = newLevel;
 
             // 敌机生成周期递进（周期越小，生成越快）
-            double newCycle = originalEnemySpawnCycle - difficultyFactor * 1.2;
+            int progressionSteps = difficultyFactor - 1;
+            double newCycle = originalEnemySpawnCycle - progressionSteps * 1.2;
             if (newCycle < MIN_SPAWN_CYCLE) {
                 newCycle = MIN_SPAWN_CYCLE;
             }

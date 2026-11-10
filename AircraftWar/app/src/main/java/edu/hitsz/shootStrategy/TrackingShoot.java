@@ -3,7 +3,6 @@ package edu.hitsz.shootStrategy;
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.AbstractEnemyAircraft;
 import edu.hitsz.aircraft.AbstractTrackingEnemyAircraft;
-import edu.hitsz.aircraft.BossEnemy;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyTrackingBullet;
 

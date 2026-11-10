@@ -1,7 +1,7 @@
 package edu.hitsz.game;
 
 import edu.hitsz.aircraft.AbstractEnemyAircraft;
-import edu.hitsz.aircraft.BossEnemy;
+import edu.hitsz.aircraft.BossEncounter;
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.GameResultHandler;
 import edu.hitsz.application.HeroController;
@@ -87,6 +87,8 @@ public abstract class AbstractGame extends Pane {
         getChildren().add(canvas);
 
         heroAircraft = HeroAircraft.getInstance();
+        heroAircraft.resetForNewRun();
+        EnemyGenerator.getInstance().resetForNewRun();
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
         enemyBullets = new LinkedList<>();
@@ -286,7 +288,7 @@ public abstract class AbstractGame extends Pane {
     protected void generateEnemy() {
         // 检查是否需要生成Boss
         if (allowBoss && score >= bossSpawnScore && score / bossSpawnScore > bossCounter) {
-            enemyGenerator = new BossSpawn(this.difficulty);
+            enemyGenerator = new BossSpawn(this.difficulty, bossCounter + 1);
             bossCounter++;
             switchToBossMusic();
         } else {
@@ -298,7 +300,7 @@ public abstract class AbstractGame extends Pane {
 
         List<AbstractEnemyAircraft> result = enemyGenerator.spawnEnemy(difficultyFactor);
         for (AbstractEnemyAircraft enemy : result) {
-            if (enemy instanceof BossEnemy) {
+            if (enemy instanceof BossEncounter) {
                 bossList.add(enemy);
             } else {
                 enemyAircrafts.add(enemy);
@@ -382,6 +384,7 @@ public abstract class AbstractGame extends Pane {
 
         // 绘制UI
         paintScoreAndLife();
+        paintBossStatus();
     }
 
     protected void paintImageWithPositionRevised(List<? extends AbstractFlyingObject> objects) {
@@ -413,6 +416,36 @@ public abstract class AbstractGame extends Pane {
         gc.fillText("LIFE:" + this.heroAircraft.getHp(), x, y);
         y = y + 20;
         gc.fillText("MAX_LIFE:" + this.heroAircraft.getMaxHp(), x, y);
+    }
+
+    private void paintBossStatus() {
+        BossEncounter boss = null;
+        for (AbstractEnemyAircraft enemy : bossList) {
+            if (!enemy.notValid() && enemy instanceof BossEncounter encounter) {
+                boss = encounter;
+                break;
+            }
+        }
+        if (boss == null) {
+            return;
+        }
+
+        double x = Main.WINDOW_WIDTH - 240;
+        double width = 224;
+        double y = 28;
+        gc.setFont(Font.font("SansSerif", FontWeight.BOLD, 16));
+        gc.setFill(Color.WHITE);
+        gc.fillText(boss.getBossName(), x, y);
+
+        gc.setFont(Font.font("SansSerif", FontWeight.BOLD, 12));
+        gc.setFill(boss.isAttackTelegraphing() ? Color.GOLD : Color.LIGHTSKYBLUE);
+        gc.fillText(boss.isAttackTelegraphing() ? "NEXT: " + boss.getAttackName() : boss.getAttackName(),
+                x, y + 17);
+
+        gc.setFill(Color.rgb(52, 27, 66));
+        gc.fillRoundRect(x, y + 24, width, 12, 6, 6);
+        gc.setFill(boss.getHealthRatio() <= 0.2 ? Color.CRIMSON : Color.MEDIUMPURPLE);
+        gc.fillRoundRect(x, y + 24, width * Math.max(0.0, Math.min(1.0, boss.getHealthRatio())), 12, 6, 6);
     }
 
 
