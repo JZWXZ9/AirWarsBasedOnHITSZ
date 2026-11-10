@@ -1,0 +1,70 @@
+@startuml 模板模式类图
+
+abstract class AbstractGame {
+    # timeInterval: int = 40
+    # heroAircraft: HeroAircraft
+    # enemyAircrafts: List<AbstractEnemyAircraft>
+    # heroBullets: List<BaseBullet>
+    # enemyBullets: List<BaseBullet>
+    # props: List<AbstractProps>
+    # bossList: List<AbstractEnemyAircraft>
+    # score: int
+    # gameOverFlag: boolean
+    # enemyMaxNumber: int
+    # enemySpawnCycle: double
+    # heroShootCycle: double
+    # bossSpawnScore: int
+    # allowBoss: boolean
+    # difficulty: DifficultyEnums
+    # difficultyFactor: int
+    --
+    + {final} action(): void
+    # tick(): void
+    # render(): void
+    # shootAction(): void
+    # bulletsMoveAction(): void
+    # aircraftMoveAction(): void
+    # propsMoveAction(): void
+    # crashCheckAction(): void
+    # postProcessAction(): void
+    # checkGameOver(): void
+    # generateEnemy(): void
+    # updateDifficultyProgression(): void
+    # initDifficultyParams(): void
+    {abstract} # initDifficultyParams(): void
+}
+
+class PeacefulGame {
+    + initDifficultyParams(): void
+}
+
+class EasyGame {
+    + initDifficultyParams(): void
+}
+
+class NormalGame {
+    - originalEnemySpawnCycle: double
+    - MIN_SPAWN_CYCLE: double = 10
+    - PROGRESSION_SCORE_INTERVAL: int = 2000
+    --
+    + initDifficultyParams(): void
+    + updateDifficultyProgression(): void
+}
+
+class HardGame {
+    - originalEnemySpawnCycle: double
+    - originalHeroShootCycle: double
+    - bossSpawnCount: int
+    - MIN_SPAWN_CYCLE: double = 6
+    - MAX_HERO_SHOOT_CYCLE: double = 3.5
+    - PROGRESSION_SCORE_INTERVAL: int = 1000
+    --
+    + initDifficultyParams(): void
+    + updateDifficultyProgression(): void
+}
+
+AbstractGame <|-- PeacefulGame
+AbstractGame <|-- EasyGame
+AbstractGame <|-- NormalGame
+AbstractGame <|-- HardGame
+@enduml

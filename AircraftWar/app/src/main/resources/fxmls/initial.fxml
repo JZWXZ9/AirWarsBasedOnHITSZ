@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="768" prefWidth="512" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.hitsz.ui.InitialController">
+   <children>
+      <Label alignment="CENTER" layoutX="56.0" layoutY="63.0" prefWidth="400.0" text="Welcome To AircraftWar!">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <Button fx:id="chooseDifficulty" layoutX="156.0" layoutY="364.0" mnemonicParsing="false" onAction="#switchToDifficultyChoice" prefWidth="200.0" text="ChooseDifficulty">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <Button fx:id="start" layoutX="158.0" layoutY="502.0" mnemonicParsing="false" onAction="#switchToGame" prefWidth="200.0" text="Let's Rock!">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <Button fx:id="settings" layoutX="156.0" layoutY="633.0" mnemonicParsing="false" prefWidth="200.0" text="Settings">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <Label alignment="CENTER" layoutX="108.0" layoutY="133.0" prefWidth="300.0" text="Author:JZWXZ">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Label fx:id="difficultyLayout" alignment="CENTER" layoutX="106.0" layoutY="230.0" prefWidth="300.0" text="CurrentDifficulty:">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

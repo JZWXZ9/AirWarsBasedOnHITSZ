@@ -1,0 +1,20 @@
+@startuml
+' 单例模式完整类图
+
+class Singleton {
+    - {static} volatile INSTANCE : Singleton
+    - Singleton()
+    + {static} getInstance() : Singleton
+    + doSomething() : void
+    + getData() : String
+}
+
+class Client {
+    + main(String[]) : void
+    + useSingleton() : void
+}
+
+
+Client --> Singleton : 调用
+
+@enduml

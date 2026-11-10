@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+interface FreezeObserver {
+    + onFreezeStart(): void
+}
+
+interface BombObserver {
+    + onBombExplosion(): void
+}
+
+abstract class FreezeSubject {
+    # observers: List<FreezeObserver>
+    --
+    + addObserver(observer: FreezeObserver): void
+    + removeObserver(observer: FreezeObserver): void
+    # notifyFreezeStart(): void {abstract}
+    + trigger(): void {abstract}
+}
+
+abstract class BombSubject {
+    # observers: List<BombObserver>
+    --
+    + addObserver(observer: BombObserver): void
+    + removeObserver(observer: BombObserver): void
+    # notifyBombExplosion(): void {abstract}
+    + trigger(): void {abstract}
+}
+
+class ConcreteFreezeSubject extends FreezeSubject {
+    # notifyFreezeStart(): void
+    + trigger(): void
+}
+
+class ConcreteBombSubject extends BombSubject {
+    # notifyBombExplosion(): void
+    + trigger(): void
+}
+
+abstract class AbstractEnemyAircraft implements FreezeObserver, BombObserver {
+}
+
+class BaseBullet implements FreezeObserver, BombObserver {
+}
+
+class BombProps {
+}
+
+class FreezeProps {
+}
+
+FreezeSubject --> FreezeObserver : notifies
+BombSubject --> BombObserver : notifies
+
+BombProps ..> ConcreteBombSubject : creates
+BombProps ..> BombObserver : registers
+
+FreezeProps ..> ConcreteFreezeSubject : creates
+FreezeProps ..> FreezeObserver : registers
+
+@enduml

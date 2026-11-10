@@ -1,0 +1,29 @@
+@startuml
+
+class AbstractEnemyFactory {
+    # probabilityForEnemySpawning : int
+    # speedX : int
+    # speedY : int
+    # hp : int
+    + createEnemyByProbability() : AbstractEnemyAircraft
+}
+
+
+class EnemyGenerator {
+    - FACTORY : List<AbstractEnemyFactory>
+    - generator : EnemyGenerator
+    + getInstance() : EnemyGenerator
+    + generateEnemy() : AbstractEnemyAircraft
+}
+
+
+AbstractEnemyFactory <|-- MobEnemyFactory
+AbstractEnemyFactory <|-- EliteMobEnemyFactory
+AbstractEnemyFactory <|-- EliteProMobEnemyFactory
+AbstractEnemyFactory <|-- ElitePlusMobEnemyFactory
+AbstractEnemyFactory <|-- BossFactory
+
+EnemyGenerator --> AbstractEnemyFactory : 聚合 >
+
+
+@enduml

@@ -1,0 +1,158 @@
+@startuml
+
+' ============================================
+' 1. 策略模式（Strategy Pattern）
+' ============================================
+interface Strategy {
+    + execute()
+}
+note right of Strategy : 抽象策略
+
+class Context {
+    - strategy : Strategy
+    + setStrategy(Strategy)
+    + doAction()
+}
+note bottom of Context : 环境类（可替换算法）
+
+Context "1" o-right-> "1" Strategy : 聚合 <br>（持有策略，可动态替换）
+
+class ConcreteStrategyA {
+    + execute()
+}
+class ConcreteStrategyB {
+    + execute()
+}
+
+Strategy <|.. ConcreteStrategyA : 实现 <br>（具体策略A）
+Strategy <|.. ConcreteStrategyB : 实现 <br>（具体策略B）
+
+' ============================================
+' 2. 观察者模式（Observer Pattern）
+' ============================================
+interface Subject {
+    + attach(Observer)
+    + detach(Observer)
+    + notify()
+}
+note right of Subject : 被观察者
+
+interface Observer {
+    + update()
+}
+note left of Observer : 观察者
+
+class ConcreteSubject {
+    - observers : List<Observer>
+    + attach()
+    + detach()
+    + notify()
+}
+class ConcreteObserver {
+    + update()
+}
+
+Subject <|.. ConcreteSubject : 实现 <br>（具体被观察者）
+Observer <|.. ConcreteObserver : 实现 <br>（具体观察者）
+ConcreteSubject "1" o-right-> "many" Observer : 聚合 <br>（一对多通知）
+
+' ============================================
+' 3. 模板方法模式（Template Method Pattern）
+' ============================================
+abstract class AbstractTemplate {
+    + templateMethod()
+    {abstract} + step1()
+    {abstract} + step2()
+}
+note bottom of AbstractTemplate : 模板方法（固定算法骨架）
+
+class ConcreteTemplate {
+    + step1()
+    + step2()
+}
+
+AbstractTemplate <|-- ConcreteTemplate : 继承 <br>（子类实现具体步骤）
+
+' ============================================
+' 4. 工厂方法模式（Factory Method Pattern）
+' ============================================
+interface Product {
+    + use()
+}
+note right of Product : 产品接口
+
+class ConcreteProduct {
+    + use()
+}
+
+abstract class Factory {
+    + factoryMethod() : Product
+    + operation()
+}
+note bottom of Factory : 工厂方法（延迟到子类）
+
+class ConcreteFactory {
+    + factoryMethod() : Product
+}
+
+Product <|.. ConcreteProduct : 实现 <br>（具体产品）
+Factory <|-- ConcreteFactory : 继承 <br>（具体工厂）
+ConcreteFactory ..> ConcreteProduct : 依赖 <br>（创建具体产品）
+
+' ============================================
+' 5. 抽象工厂模式（Abstract Factory Pattern）
+' ============================================
+interface AbstractProductA {
+    + useA()
+}
+interface AbstractProductB {
+    + useB()
+}
+
+class ProductA1 {
+    + useA()
+}
+class ProductB1 {
+    + useB()
+}
+
+interface AbstractFactoryAF {
+    + createA() : AbstractProductA
+    + createB() : AbstractProductB
+}
+note right of AbstractFactoryAF : 产品族工厂
+
+class ConcreteFactory1 {
+    + createA() : AbstractProductA
+    + createB() : AbstractProductB
+}
+
+AbstractProductA <|.. ProductA1 : 实现
+AbstractProductB <|.. ProductB1 : 实现
+AbstractFactoryAF <|.. ConcreteFactory1 : 实现
+ConcreteFactory1 ..> ProductA1 : 依赖 <br>（创建产品A1）
+ConcreteFactory1 ..> ProductB1 : 依赖 <br>（创建产品B1）
+
+' ============================================
+' 6. 单例模式（Singleton Pattern）
+' ============================================
+class Singleton {
+    - instance : Singleton
+    - Singleton()
+    + getInstance() : Singleton
+}
+note top of Singleton : 构造私有 <br>全局唯一实例
+
+' ============================================
+' 7. 图例说明（箭头汇总）
+' ============================================
+note as Legend
+  <b>【UML 箭头统一解释】</b>
+  <b><|..</b> ： 实现（类 → 接口）
+  <b><|--</b> ： 继承（子类 → 父类）
+  <b>o--</b>  ： 聚合（整体 → 部分，可独立存在）
+  <b>..></b>  ： 依赖（使用方 → 被使用方）
+  <b>--></b>  ： 关联 / 持有引用
+end note
+
+@enduml

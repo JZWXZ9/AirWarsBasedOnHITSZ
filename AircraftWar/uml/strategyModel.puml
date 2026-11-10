@@ -1,0 +1,59 @@
+@startuml
+
+class AbstractShootStrategy {
+    # aircraft : AbstractAircraft
+    + createHeroOrEnemyBullet(...) : BaseBullet
+}
+
+class StraightShoot {
+    + shootStrategy() : List<BaseBullet>
+}
+
+class ScatterShoot {
+    + shootStrategy() : List<BaseBullet>
+}
+
+class FanShapedShoot {
+    + shootStrategy() : List<BaseBullet>
+}
+
+class TrackingShoot {
+    - trackingBulletCounter : int
+    + shootStrategy() : List<BaseBullet>
+}
+
+class BossShoot1 {
+    - shootPhase : ShootPhase
+    - fanShapedShoot : AbstractShootStrategy
+    - trackingShoot : AbstractShootStrategy
+    + shootStrategy() : List<BaseBullet>
+}
+
+class AbstractAircraft {
+    # strategyList : List<AbstractShootStrategy>
+    + shoot() : List<BaseBullet>
+    + setShootStrategy(List) : void
+}
+
+class HeroAircraft {
+    - strategyIndex : int
+    + shoot() : List<BaseBullet>
+}
+
+class AbstractEnemyAircraft {
+    + shootByTick() : List<BaseBullet>
+}
+
+AbstractShootStrategy <|-- StraightShoot
+AbstractShootStrategy <|-- ScatterShoot
+AbstractShootStrategy <|-- FanShapedShoot
+AbstractShootStrategy <|-- TrackingShoot
+AbstractShootStrategy <|-- BossShoot1
+
+AbstractAircraft <|-- HeroAircraft
+AbstractAircraft <|-- AbstractEnemyAircraft
+
+AbstractAircraft --> AbstractShootStrategy : 聚合 >
+
+
+@enduml

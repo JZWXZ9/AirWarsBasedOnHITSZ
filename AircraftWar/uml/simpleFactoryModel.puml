@@ -1,0 +1,25 @@
+@startuml
+class AbstractProps {
+    + functionOnHero() : void
+    + functionOnEnemy(List) : void
+}
+
+class BloodProps
+class BulletProps
+class BulletPlusProps
+class BombProps
+class FreezeProps
+
+class PropsFactory {
+    + random : Random
+    + createProps(name : String, x : int, y : int) : AbstractProps
+}
+
+AbstractProps <|-- BloodProps
+AbstractProps <|-- BulletProps
+AbstractProps <|-- BulletPlusProps
+AbstractProps <|-- BombProps
+AbstractProps <|-- FreezeProps
+
+PropsFactory ..> AbstractProps : 创建 >
+@enduml

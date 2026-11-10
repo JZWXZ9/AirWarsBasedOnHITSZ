@@ -1,0 +1,334 @@
+@startuml
+'顶层抽象类
+abstract class AbstractFlyingObject {
+    # locationX : int
+    # locationY : int
+    # speedX : int
+    # speedY : int
+    # image : Image
+    # width : int
+    # height : int
+    # isValid : boolean
+    + forward() : void
+    + crash(AbstractFlyingObject) : boolean
+    + getLocationX() : int
+    + getLocationY() : int
+    + setLocation(double, double) : void
+    + getImage() : Image
+    + getWidth() : int
+    + getHeight() : int
+    + notValid() : boolean
+    + vanish() : void
+    + getAngle() : double
+}
+
+'子弹继承体系
+abstract class BaseBullet {
+    - power : int
+    + BaseBullet(int, int, int, int, int)
+    + forward() : void
+    + getPower() : int
+}
+
+class HeroBullet {
+    + HeroBullet(int, int, int, int, int)
+}
+
+class EnemyBullet {
+    + EnemyBullet(int, int, int, int, int)
+}
+
+class EnemyTrackingBullet {
+    - SPAWN_TIME : long
+    - DURATION_TIME : long
+    - CURRENT_SPEED : double
+    + EnemyTrackingBullet(int, int, int, int, int)
+    - shouldVanish() : boolean
+    + update() : void
+    + forward() : void
+}
+
+'飞机继承体系
+abstract class AbstractAircraft {
+    # maxHp : int
+    # hp : int
+    # strategyList : List<AbstractShootStrategy>
+    # shootNum : int
+    # power : int
+    # direction : int
+    # shootSpeed : int
+    + AbstractAircraft(int, int, int, int, int)
+    + decreaseHp(int) : void
+    + getHp() : int
+    + shoot() : List<BaseBullet>
+    + setShootStrategy(List) : void
+    + getShootNum() : int
+    + getDirection() : int
+    + getPower() : int
+    + getShootSpeed() : int
+    + getSpeedXIncrement() : int
+}
+
+abstract class AbstractEnemyAircraft {
+    # PROPS_LIST : List<String>
+    # probabilityForEachProp : List<Integer>
+    # random : Random
+    # score : int
+    # shootCounter : int
+    # shootCycle : int
+    + AbstractEnemyAircraft(int, int, int, int, int)
+    + getPropsIfVanish() : List<AbstractProps>
+    + shootByTick() : List<BaseBullet>
+    + getScore() : int
+    + getTrackingBulletCycle() : int
+}
+
+abstract class AbstractTrackingEnemyAircraft {
+    - isTracking : boolean
+    - SPAWN_TIME : long
+    - TRACKING_TIME : long
+    - TOTAL_SPEED : double
+    - trackingBulletCounter : int
+    - TRACKING_BULLET_CYCLE : int
+    + AbstractTrackingEnemyAircraft(int, int, int, int, int)
+    + keepTracking() : boolean
+    + forward() : void
+}
+
+class MobEnemy {
+    + MobEnemy(int, int, int, int, int)
+    + forward() : void
+    + shoot() : List<BaseBullet>
+    + getPropsIfVanish() : List<AbstractProps>
+}
+
+class EliteMobEnemy {
+    + EliteMobEnemy(int, int, int, int, int)
+    + forward() : void
+}
+
+class EliteTrackingMobEnemy {
+    + EliteTrackingMobEnemy(int, int, int, int, int)
+}
+
+class EliteProMobEnemy {
+    - BULLET_TOTAL_SPEED : int
+    - SHOOT_NUM : int
+    + EliteProMobEnemy(int, int, int, int, int)
+    + shoot() : List<BaseBullet>
+    + getSpeedXIncrement() : int
+}
+
+class ElitePlusMobEnemy {
+    + ElitePlusMobEnemy(int, int, int, int, int)
+    + getAngle() : double
+}
+
+class BossEnemy {
+    - TRACKING_BULLET_CYCLE : int
+    + BossEnemy(int, int, int, int, int)
+    + getTrackingBulletCycle() : int
+    + getAngle() : double
+    + getPropsIfVanish() : List<AbstractProps>
+}
+
+class HeroAircraft {
+    - isInvincible : boolean
+    - invincibleTime : int
+    - expectedInvincibleTime : int
+    - hero : HeroAircraft
+    - strategyIndex : int
+    - HeroAircraft()
+    + getInstance() : HeroAircraft
+    + forward() : void
+    + shoot() : List<BaseBullet>
+    + increaseHp(int) : void
+    + getMaxHp() : int
+    + increaseMaxHp(int) : void
+    + isInvincible() : boolean
+    + setInvincible(boolean) : void
+    + invincibleController() : void
+    + getAngle() : double
+}
+
+'道具继承体系
+abstract class AbstractProps {
+    - SPAWN_LOCATION_Y : int
+    - CENTER : int
+    - originalY : int
+    # heroAircraft : HeroAircraft
+    # enemyAircrafts : List<AbstractEnemyAircraft>
+    # imageWidth : int
+    + AbstractProps(int, int)
+    + forward() : void
+    + functionOnHero() : void
+    + functionOnEnemy(List) : void
+}
+
+class BloodProps {
+    - INCREASEMENT_OF_HP : int
+    + BloodProps(int, int, int)
+    + functionOnHero() : void
+}
+
+class BulletProps {
+    + BulletProps(int, int)
+    + functionOnHero() : void
+}
+
+class BulletPlusProps {
+    + BulletPlusProps(int, int)
+    + functionOnHero() : void
+}
+
+class BombProps {
+    + BombProps(int, int)
+    + functionOnHero() : void
+}
+
+class FreezeProps {
+    + FreezeProps(int, int)
+    + functionOnHero() : void
+}
+
+'策略模式
+abstract class AbstractShootStrategy {
+    # aircraft : AbstractAircraft
+    + AbstractShootStrategy(AbstractAircraft)
+    + shootStrategy() : List<BaseBullet>
+    + createHeroOrEnemyBullet(int, int, int, int) : BaseBullet
+}
+
+class StraightShoot {
+    + StraightShoot(AbstractAircraft)
+    + shootStrategy() : List<BaseBullet>
+}
+
+class ScatterShoot {
+    + ScatterShoot(AbstractAircraft)
+    + shootStrategy() : List<BaseBullet>
+}
+
+class FanShapedShoot {
+    + FanShapedShoot(AbstractAircraft)
+    + shootStrategy() : List<BaseBullet>
+}
+
+class TrackingShoot {
+    - trackingBulletCounter : int
+    - TRACKING_BULLET_CYCLE : int
+    + TrackingShoot(AbstractEnemyAircraft)
+    + shootStrategy() : List<BaseBullet>
+}
+
+class BossShoot1 {
+    - shootPhase : ShootPhase
+    - phaseCounter : int
+    - fanShapedShoot : AbstractShootStrategy
+    - trackingShoot : AbstractShootStrategy
+    + BossShoot1(BossEnemy)
+    + shootStrategy() : List<BaseBullet>
+}
+
+'工厂模式（敌机）
+abstract class AbstractEnemyFactory {
+    # random : Random
+    # probabilityForEnemySpawning : int
+    # speedX : int
+    # speedY : int
+    # hp : int
+    + createEnemy() : AbstractEnemyAircraft
+    + createEnemyByProbability() : AbstractEnemyAircraft
+}
+
+class MobEnemyFactory
+class EliteMobEnemyFactory
+class EliteTrackingMobEnemyFactory
+class EliteProMobEnemyFactory
+class ElitePlusMobEnemyFactory
+class BossFactory
+
+class EnemyGenerator {
+    - FACTORY : List<AbstractEnemyFactory>
+    - generator : EnemyGenerator
+    - EnemyGenerator()
+    + getInstance() : EnemyGenerator
+    + generateEnemy() : AbstractEnemyAircraft
+}
+
+'简单工厂（道具）
+class PropsFactory {
+    + random : Random
+    + createProps(String, int, int) : AbstractProps
+}
+
+'生成策略
+abstract class AbstractSpawnStrategy {
+    + spawnEnemy() : List<AbstractEnemyAircraft>
+}
+
+class NormalSpawn {
+    - generator : EnemyGenerator
+    + spawnEnemy() : List<AbstractEnemyAircraft>
+}
+
+class BossSpawn {
+    - isSpawningSuccessful : boolean
+    - bossGenerator : BossFactory
+    + spawnEnemy() : List<AbstractEnemyAircraft>
+}
+
+'继承关系
+AbstractFlyingObject <|-- BaseBullet
+AbstractFlyingObject <|-- AbstractAircraft
+AbstractFlyingObject <|-- AbstractProps
+
+BaseBullet <|-- HeroBullet
+BaseBullet <|-- EnemyBullet
+EnemyBullet <|-- EnemyTrackingBullet
+
+AbstractAircraft <|-- AbstractEnemyAircraft
+AbstractAircraft <|-- HeroAircraft
+
+AbstractEnemyAircraft <|-- AbstractTrackingEnemyAircraft
+AbstractEnemyAircraft <|-- MobEnemy
+AbstractEnemyAircraft <|-- EliteMobEnemy
+AbstractEnemyAircraft <|-- EliteProMobEnemy
+AbstractEnemyAircraft <|-- ElitePlusMobEnemy
+AbstractEnemyAircraft <|-- BossEnemy
+
+AbstractTrackingEnemyAircraft <|-- EliteTrackingMobEnemy
+
+AbstractShootStrategy <|-- StraightShoot
+AbstractShootStrategy <|-- ScatterShoot
+AbstractShootStrategy <|-- FanShapedShoot
+AbstractShootStrategy <|-- TrackingShoot
+AbstractShootStrategy <|-- BossShoot1
+
+AbstractEnemyFactory <|-- MobEnemyFactory
+AbstractEnemyFactory <|-- EliteMobEnemyFactory
+AbstractEnemyFactory <|-- EliteTrackingMobEnemyFactory
+AbstractEnemyFactory <|-- EliteProMobEnemyFactory
+AbstractEnemyFactory <|-- ElitePlusMobEnemyFactory
+AbstractEnemyFactory <|-- BossFactory
+
+AbstractSpawnStrategy <|-- NormalSpawn
+AbstractSpawnStrategy <|-- BossSpawn
+
+AbstractProps <|-- BloodProps
+AbstractProps <|-- BulletProps
+AbstractProps <|-- BulletPlusProps
+AbstractProps <|-- FreezeProps
+AbstractProps <|-- BombProps
+
+'关联关系
+AbstractAircraft --> AbstractShootStrategy : 聚合 >
+HeroAircraft --> HeroBullet : 产生 >
+AbstractEnemyAircraft --> EnemyBullet : 产生 >
+EnemyGenerator --> AbstractEnemyFactory : 聚合 >
+BossSpawn --> BossFactory : 依赖 >
+PropsFactory ..> AbstractProps : 创建 >
+Game --> EnemyGenerator : 使用 >
+Game --> PropsFactory : 使用 >
+
+@enduml

@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface RecordDao {
+    + getAllRecords(): List<Record>
+    + findByPlayerName(playerName: String): List<Record>
+    + addRecord(record: Record): void
+    + deleteRecord(index: int): void
+    + getLeaderboard(limit: int): List<Record>
+}
+
+class RecordDaoImpl implements RecordDao {
+    - globalGameCount: int {static}
+    - DATA_DIR: String {static}
+    - FILE_EXTENSION: String {static}
+    - difficulty: String
+    - records: List<Record>
+    --
+    + RecordDaoImpl(difficulty: String)
+    - ensureDataDirExists(): void
+    - getDataFilePath(): String
+    - loadRecordsFromFile(): void
+    - saveRecordsToFile(): void
+    - updateRanks(): void
+    + getAllRecords(): List<Record>
+    + findByPlayerName(playerName: String): List<Record>
+    + addRecord(record: Record): void
+    + deleteRecord(index: int): void
+    + getLeaderboard(limit: int): List<Record>
+    + getGlobalGameCount(): int {static}
+    + incrementGameCount(): void {static}
+}
+
+class Record implements Comparable<Record> {
+    - rank: int
+    - playerName: String
+    - score: int
+    - recordTime: String
+    --
+    + Record(playerName: String, score: int)
+    + Record(playerName: String, score: int, recordTime: String)
+    + getRank(): int
+    + setRank(rank: int): void
+    + getPlayerName(): String
+    + setPlayerName(playerName: String): void
+    + getScore(): int
+    + setScore(score: int): void
+    + getRecordTime(): String
+    + setRecordTime(recordTime: String): void
+    + compareTo(other: Record): int
+    + toString(): String
+}
+
+RecordDaoImpl --> Record : uses
+
+@enduml

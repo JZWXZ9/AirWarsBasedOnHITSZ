@@ -1,0 +1,22 @@
+# Gradle state and generated build outputs
+**/.gradle/
+**/build/
+
+# IDE and compiler output
+**/.idea/
+**/out/
+**/*.iml
+*.class
+
+# Local game records (created and updated while playing)
+/AircraftWar/app/resources/records/*.csv
+
+# Redundant packaged source archive
+/AircraftWar/app/src/main/java/edu/hitsz.zip
+
+# Personal course submission document
+/*.docx
+
+# OS metadata
+.DS_Store
+Thumbs.db
