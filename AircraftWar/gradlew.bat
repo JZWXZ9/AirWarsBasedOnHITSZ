@@ -38,6 +38,24 @@ for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
 @rem Keep wrapper downloads in the project when no shared Gradle home is configured.
 if not defined GRADLE_USER_HOME for %%i in ("%APP_HOME%..\.gradle") do set "GRADLE_USER_HOME=%%~fi"
 
+@rem Gradle 9 needs Java 17+. Fall back to the installed JDK 21 if PATH/JAVA_HOME points to an older JDK.
+set "JAVA_VERSION="
+set "JAVA_MAJOR="
+if defined JAVA_HOME (
+    for /f "tokens=3" %%i in ('"%JAVA_HOME%\bin\java.exe" -version 2^>^&1 ^| findstr /i "version"') do set "JAVA_VERSION=%%~i"
+) else (
+    for /f "tokens=3" %%i in ('java.exe -version 2^>^&1 ^| findstr /i "version"') do set "JAVA_VERSION=%%~i"
+)
+if defined JAVA_VERSION for /f "tokens=1,2 delims=." %%a in ("%JAVA_VERSION%") do (set "JAVA_MAJOR=%%a" & if "%%a"=="1" set "JAVA_MAJOR=%%b")
+if not defined JAVA_MAJOR goto useLocalJdk21
+if %JAVA_MAJOR% LSS 17 goto useLocalJdk21
+goto javaVersionReady
+
+:useLocalJdk21
+if exist "%ProgramFiles%\Java\jdk-21\bin\java.exe" set "JAVA_HOME=%ProgramFiles%\Java\jdk-21"
+
+:javaVersionReady
+
 @rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
 
