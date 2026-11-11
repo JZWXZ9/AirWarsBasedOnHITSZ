@@ -38,8 +38,11 @@ public class ImageManager {
     public static Image ENEMY_TRACKING_BULLET_IMAGE;
 
     public static Image HERO_IMAGE;
+    public static boolean HERO_IMAGE_FACES_RIGHT;
+    public static boolean HERO_BULLET_FACES_RIGHT;
     public static Image MOB_ENEMY_IMAGE;
     public static Image ELITE_MOB_ENEMY_IMAGE;
+    public static Image ELITE_TRACKING_MOB_ENEMY_IMAGE;
     public static Image ELITE_PRO_MOB_ENEMY_IMAGE;
     public static Image ELITE_PLUS_MOB_ENEMY_IMAGE;
     public static Image JEVIL_BOSS_IMAGE;
@@ -58,16 +61,28 @@ public class ImageManager {
             NORMAL_BACKGROUND_IMAGE = loadFromResources("/images/bg3.jpg");
             HARD_BACKGROUND_IMAGE = loadFromResources("/images/bg4.jpg");
 
-            HERO_IMAGE = loadFromResources("/images/hero.png");
-            MOB_ENEMY_IMAGE = loadFromResources("/images/mob.png");
-            ELITE_MOB_ENEMY_IMAGE = loadFromResources("/images/elite.png");
-            ELITE_PRO_MOB_ENEMY_IMAGE = loadFromResources("/images/elitePro.png");
-            ELITE_PLUS_MOB_ENEMY_IMAGE = loadFromResources("/images/elitePlus.png");
-            JEVIL_BOSS_IMAGE = JevilBossImage.createImage();
+            Image yellowHeart = loadOptional("/images/deltarune-local/yellow-heart.png", null);
+            HERO_IMAGE_FACES_RIGHT = yellowHeart != null;
+            HERO_IMAGE = yellowHeart != null ? yellowHeart : loadFromResources("/images/hero.png");
+            MOB_ENEMY_IMAGE = loadOptional("/images/deltarune-local/rudinn.png",
+                    loadFromResources("/images/mob.png"));
+            ELITE_MOB_ENEMY_IMAGE = loadOptional("/images/deltarune-local/hathy.png",
+                    loadFromResources("/images/elite.png"));
+            ELITE_TRACKING_MOB_ENEMY_IMAGE = loadOptional("/images/deltarune-local/rabbick.png",
+                    ELITE_MOB_ENEMY_IMAGE);
+            ELITE_PRO_MOB_ENEMY_IMAGE = loadOptional("/images/deltarune-local/checker.png",
+                    loadFromResources("/images/elitePro.png"));
+            ELITE_PLUS_MOB_ENEMY_IMAGE = loadOptional("/images/deltarune-local/jigsawry.png",
+                    loadFromResources("/images/elitePlus.png"));
+            JEVIL_BOSS_IMAGE = loadOptional("/images/deltarune-local/jevil.png", JevilBossImage.createImage());
 
-            HERO_BULLET_IMAGE = loadFromResources("/images/bullet_hero.png");
-            ENEMY_BULLET_IMAGE = loadFromResources("/images/bullet_enemy.png");
-            ENEMY_TRACKING_BULLET_IMAGE = loadFromResources("/images/bullet_enemy.png");
+            Image yellowShot = loadOptional("/images/deltarune-local/yellow-shot.png", null);
+            HERO_BULLET_FACES_RIGHT = yellowShot != null;
+            HERO_BULLET_IMAGE = yellowShot != null ? yellowShot : loadFromResources("/images/bullet_hero.png");
+            ENEMY_BULLET_IMAGE = loadOptional("/images/deltarune-local/diamond.png",
+                    loadFromResources("/images/bullet_enemy.png"));
+            ENEMY_TRACKING_BULLET_IMAGE = loadOptional("/images/deltarune-local/spade.png",
+                    ENEMY_BULLET_IMAGE);
 
             BLOOD_PROP = loadFromResources("/images/prop_blood.png");
             BOMB_PROP = loadFromResources("/images/prop_bomb.png");
@@ -78,7 +93,7 @@ public class ImageManager {
             CLASSNAME_IMAGE_MAP.put(HeroAircraft.class.getName(), HERO_IMAGE);
             CLASSNAME_IMAGE_MAP.put(MobEnemy.class.getName(), MOB_ENEMY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(EliteMobEnemy.class.getName(), ELITE_MOB_ENEMY_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(EliteTrackingMobEnemy.class.getName(), ELITE_MOB_ENEMY_IMAGE);
+            CLASSNAME_IMAGE_MAP.put(EliteTrackingMobEnemy.class.getName(), ELITE_TRACKING_MOB_ENEMY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(EliteProMobEnemy.class.getName(), ELITE_PRO_MOB_ENEMY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(ElitePlusMobEnemy.class.getName(), ELITE_PLUS_MOB_ENEMY_IMAGE);
             CLASSNAME_IMAGE_MAP.put(JevilBoss.class.getName(), JEVIL_BOSS_IMAGE);
@@ -117,6 +132,16 @@ public class ImageManager {
                 throw new IOException("Resource not found: " + resourcePath);
             }
             return new Image(input);
+        }
+    }
+
+    private static Image loadOptional(String resourcePath, Image fallback) {
+        try (InputStream input = ImageManager.class.getResourceAsStream(resourcePath)) {
+            if (input == null) return fallback;
+            Image image = new Image(input);
+            return image.isError() ? fallback : image;
+        } catch (IOException | RuntimeException ignored) {
+            return fallback;
         }
     }
 }

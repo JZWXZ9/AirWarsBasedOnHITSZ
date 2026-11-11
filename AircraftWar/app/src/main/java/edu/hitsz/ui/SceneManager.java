@@ -36,8 +36,6 @@ public class SceneManager {
         switchTo(SceneEnums.INITIAL_CHOICE);
         primaryStage.setTitle("Aircraft War");
         primaryStage.setResizable(false);
-        primaryStage.setMaxWidth(WINDOW_WIDTH);
-        primaryStage.setMaxHeight(WINDOW_HEIGHT);
         primaryStage.show();
     }
 

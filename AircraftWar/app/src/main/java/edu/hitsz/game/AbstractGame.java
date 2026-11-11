@@ -8,6 +8,7 @@ import edu.hitsz.application.HeroController;
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
+import edu.hitsz.bullet.HeroBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.enemySpawnStrategy.AbstractSpawnStrategy;
 import edu.hitsz.enemySpawnStrategy.BossSpawn;
@@ -61,6 +62,7 @@ public abstract class AbstractGame extends Pane {
     protected Random random = new Random();
     protected MusicThread musicThread;
     private final Map<MusicEnums, MusicThread> activeSoundEffects = new EnumMap<>(MusicEnums.class);
+    private final HeroController heroController;
 
     protected int score = 0;
     protected boolean gameOverFlag = false;
@@ -98,13 +100,13 @@ public abstract class AbstractGame extends Pane {
         props = new LinkedList<>();
         bossList = new LinkedList<>();
 
-        new HeroController(this, heroAircraft);
+        heroController = new HeroController(this, heroAircraft);
 
         // 初始化难度参数（子类实现）
         initDifficultyParams();
 
         // 初始化敌人生成器
-        enemyGenerator = new NormalSpawn();
+        enemyGenerator = new NormalSpawn(difficulty);
 
         // 启动背景音乐
         startBackgroundMusic();
@@ -122,6 +124,7 @@ public abstract class AbstractGame extends Pane {
         if (timer != null) {
             return;
         }
+        requestFocus();
 
         timer =  new AnimationTimer() {
             @Override
@@ -152,6 +155,12 @@ public abstract class AbstractGame extends Pane {
 
     protected void tick() {
         updateDifficultyProgression();
+        if (isBossMode()) {
+            heroController.setMovementBounds(Main.BATTLE_ARENA_LEFT, Main.BATTLE_ARENA_TOP,
+                    Main.BATTLE_ARENA_RIGHT, Main.BATTLE_ARENA_BOTTOM);
+        } else {
+            heroController.setMovementBounds(0, 0, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT);
+        }
 
         enemySpawnCounter++;
         if (enemySpawnCounter >= enemySpawnCycle && enemyAircrafts.size() + bossList.size() < enemyMaxNumber) {
@@ -216,7 +225,7 @@ public abstract class AbstractGame extends Pane {
                 heroAircraft.setInvincible(true);
                 heroAircraft.setExpectedInvincibleTime(40);
                 bullet.vanish();
-                playSound(MusicEnums.BULLET_HIT);
+                playSound(MusicEnums.HERO_HURT);
             }
         }
 
@@ -236,13 +245,17 @@ public abstract class AbstractGame extends Pane {
                         score += enemy.getScore();
                         props.addAll(enemy.getPropsIfVanish());
                     }
+                    break;
                 }
+            }
+        }
 
-                // 英雄与敌机相撞
-                if (enemy.crash(heroAircraft) || heroAircraft.crash(enemy)) {
-                    enemy.vanish();
-                    heroAircraft.decreaseHp(Integer.MAX_VALUE);
-                }
+        // 飞机相撞与是否有英雄子弹无关。
+        for (AbstractEnemyAircraft enemy : getAllEnemies()) {
+            if (!enemy.notValid() && enemy.crash(heroAircraft)) {
+                enemy.vanish();
+                heroAircraft.decreaseHp(Integer.MAX_VALUE);
+                break;
             }
         }
 
@@ -267,11 +280,17 @@ public abstract class AbstractGame extends Pane {
     }
 
     protected void postProcessAction() {
+        boolean hadBoss = isBossMode();
         enemyBullets.removeIf(AbstractFlyingObject::notValid);
         heroBullets.removeIf(AbstractFlyingObject::notValid);
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
         bossList.removeIf(AbstractFlyingObject::notValid);
         props.removeIf(AbstractProps::notValid);
+        if (hadBoss && !isBossMode()) {
+            enemyBullets.clear();
+            enemyGenerator = new NormalSpawn(difficulty);
+            switchToNormalMusic();
+        }
     }
 
     protected void checkGameOver() {
@@ -291,12 +310,15 @@ public abstract class AbstractGame extends Pane {
     protected void generateEnemy() {
         // 检查是否需要生成Boss
         if (allowBoss && score >= bossSpawnScore && score / bossSpawnScore > bossCounter) {
+            enemyAircrafts.clear();
+            enemyBullets.clear();
+            props.clear();
             enemyGenerator = new BossSpawn(this.difficulty, bossCounter + 1);
             bossCounter++;
             switchToBossMusic();
         } else {
             if (!(enemyGenerator instanceof NormalSpawn) && !isBossMode()) {
-                enemyGenerator = new NormalSpawn();
+                enemyGenerator = new NormalSpawn(difficulty);
                 switchToNormalMusic();
             }
         }
@@ -370,12 +392,16 @@ public abstract class AbstractGame extends Pane {
     protected void render() {
         gc.clearRect(0, 0, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT);
 
-        // 滚动背景
-        gc.drawImage(backGroundImage, 0, backGroundTop - Main.WINDOW_HEIGHT);
-        gc.drawImage(backGroundImage, 0, backGroundTop);
-        backGroundTop += 1;
-        if (backGroundTop == Main.WINDOW_HEIGHT) {
-            backGroundTop = 0;
+        if (isBossMode()) {
+            paintBattleArena();
+        } else {
+            // 滚动背景
+            gc.drawImage(backGroundImage, 0, backGroundTop - Main.WINDOW_HEIGHT);
+            gc.drawImage(backGroundImage, 0, backGroundTop);
+            backGroundTop += 1;
+            if (backGroundTop == Main.WINDOW_HEIGHT) {
+                backGroundTop = 0;
+            }
         }
 
         // 绘制对象
@@ -386,9 +412,12 @@ public abstract class AbstractGame extends Pane {
         paintImageWithPositionRevised(props);
 
         // 绘制英雄机
-        gc.drawImage(ImageManager.HERO_IMAGE,
-                heroAircraft.getLocationX() - ImageManager.HERO_IMAGE.getWidth() / 2,
-                heroAircraft.getLocationY() - ImageManager.HERO_IMAGE.getHeight() / 2);
+        gc.save();
+        gc.translate(heroAircraft.getLocationX(), heroAircraft.getLocationY());
+        if (ImageManager.HERO_IMAGE_FACES_RIGHT) gc.rotate(-90);
+        gc.drawImage(ImageManager.HERO_IMAGE, -ImageManager.HERO_IMAGE.getWidth() / 2,
+                -ImageManager.HERO_IMAGE.getHeight() / 2);
+        gc.restore();
 
         // 绘制UI
         paintScoreAndLife();
@@ -403,7 +432,11 @@ public abstract class AbstractGame extends Pane {
             if (obj instanceof BaseBullet || obj instanceof edu.hitsz.aircraft.AbstractTrackingEnemyAircraft) {
                 gc.save();
                 gc.translate(obj.getLocationX(), obj.getLocationY());
-                gc.rotate(obj.getAngle() - 90);
+                if (obj instanceof HeroBullet) {
+                    gc.rotate(obj.getAngle() + (ImageManager.HERO_BULLET_FACES_RIGHT ? 0 : 90));
+                } else {
+                    gc.rotate(obj.getAngle() - 90);
+                }
                 gc.drawImage(image, -image.getWidth() / 2, -image.getHeight() / 2);
                 gc.restore();
             } else {
@@ -417,13 +450,30 @@ public abstract class AbstractGame extends Pane {
     private void paintScoreAndLife() {
         int x = 10;
         int y = 25;
-        gc.setFill(Color.rgb(0, 0, 255));
-        gc.setFont(Font.font("SansSerif", FontWeight.BOLD, 22));
-        gc.fillText("SCORE:" + this.score, x, y);
+        gc.setFill(isBossMode() ? Color.WHITE : Color.rgb(0, 0, 255));
+        gc.setFont(Font.font(isBossMode() ? "Monospaced" : "SansSerif", FontWeight.BOLD, 20));
+        gc.fillText(isBossMode() ? "SCORE " + this.score : "SCORE:" + this.score, x, y);
         y = y + 20;
-        gc.fillText("LIFE:" + this.heroAircraft.getHp(), x, y);
+        gc.fillText(isBossMode() ? "HP    " + this.heroAircraft.getHp() : "LIFE:" + this.heroAircraft.getHp(), x, y);
         y = y + 20;
         gc.fillText("MAX_LIFE:" + this.heroAircraft.getMaxHp(), x, y);
+    }
+
+    private void paintBattleArena() {
+        gc.setFill(Color.rgb(4, 3, 9));
+        gc.fillRect(0, 0, Main.WINDOW_WIDTH, Main.WINDOW_HEIGHT);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(Main.BATTLE_ARENA_LEFT, Main.BATTLE_ARENA_TOP,
+                Main.BATTLE_ARENA_RIGHT - Main.BATTLE_ARENA_LEFT,
+                Main.BATTLE_ARENA_BOTTOM - Main.BATTLE_ARENA_TOP);
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(3);
+        gc.strokeRect(Main.BATTLE_ARENA_LEFT, Main.BATTLE_ARENA_TOP,
+                Main.BATTLE_ARENA_RIGHT - Main.BATTLE_ARENA_LEFT,
+                Main.BATTLE_ARENA_BOTTOM - Main.BATTLE_ARENA_TOP);
+        gc.setFill(Color.WHITE);
+        gc.setFont(Font.font("Monospaced", FontWeight.BOLD, 14));
+        gc.fillText("MOUSE MOVE    AUTO FIRE", 28, Main.WINDOW_HEIGHT - 18);
     }
 
     private void paintBossStatus() {

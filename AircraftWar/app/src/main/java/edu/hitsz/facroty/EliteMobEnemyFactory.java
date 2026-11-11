@@ -13,6 +13,7 @@ public class EliteMobEnemyFactory extends AbstractEnemyFactory{
         this.speedX = 0;
         this.speedY = 10;
         this.hp = 300;
+        configureHardHpScaling(0.01, 0.12);
         rememberBaseStats();
     }
 

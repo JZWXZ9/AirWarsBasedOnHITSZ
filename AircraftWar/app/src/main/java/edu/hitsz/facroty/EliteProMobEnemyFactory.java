@@ -12,7 +12,9 @@ public class EliteProMobEnemyFactory extends AbstractEnemyFactory{
         this.defaultSpawningProbability = -40;
         this.probabilityIncrement = 1;
         this.speedY = 2;
-        this.hp = 5000;
+        this.hp = 2000;
+        configureHardHpScaling(0.01, 0.12);
+        configureHardBaseHp(1600);
         this.maxSpawnProbability = 20;
         rememberBaseStats();
     }

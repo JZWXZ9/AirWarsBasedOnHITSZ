@@ -9,6 +9,8 @@ public final class PatternBullet extends EnemyBullet {
     private final double waveFrequency;
     private final double wavePhase;
     private final PatternBulletStyle style;
+    private final int originX;
+    private final int originY;
     private int age;
 
     public PatternBullet(int locationX, int locationY, int speedX, int speedY, int power,
@@ -20,6 +22,8 @@ public final class PatternBullet extends EnemyBullet {
                          PatternBulletStyle style, double waveAmplitude, double waveFrequency,
                          double wavePhase) {
         super(locationX, locationY, speedX, speedY, power);
+        this.originX = locationX;
+        this.originY = locationY;
         this.style = style;
         this.waveAmplitude = waveAmplitude;
         this.waveFrequency = waveFrequency;
@@ -49,8 +53,9 @@ public final class PatternBullet extends EnemyBullet {
         }
 
         age++;
-        locationX += speedX + (int) Math.round(Math.sin(age * waveFrequency + wavePhase) * waveAmplitude);
-        locationY += speedY;
+        locationX = originX + speedX * age
+                + (int) Math.round(Math.sin(age * waveFrequency + wavePhase) * waveAmplitude);
+        locationY = originY + speedY * age;
         if (locationX < -width || locationX > Main.WINDOW_WIDTH + width
                 || locationY < -height || locationY > Main.WINDOW_HEIGHT + height) {
             vanish();

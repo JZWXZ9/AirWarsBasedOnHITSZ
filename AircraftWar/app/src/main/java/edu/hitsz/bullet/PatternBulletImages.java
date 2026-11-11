@@ -28,6 +28,11 @@ final class PatternBulletImages {
     }
 
     private static Image createImage(PatternBulletStyle style) {
+        Image extracted = loadExtractedImage(style);
+        if (extracted != null) {
+            return extracted;
+        }
+
         int size = 13;
         WritableImage image = new WritableImage(size, size);
         PixelWriter pixels = image.getPixelWriter();
@@ -48,6 +53,27 @@ final class PatternBulletImages {
         return image;
     }
 
+    private static Image loadExtractedImage(PatternBulletStyle style) {
+        String filename = switch (style) {
+            case DIAMOND -> "diamond.png";
+            case SPADE -> "spade.png";
+            case ORB -> "suitbomb.png";
+            case CAROUSEL -> "carousel.png";
+            case SCYTHE -> "scythe.png";
+            case CLUB -> "club.png";
+        };
+        try (var input = PatternBulletImages.class.getResourceAsStream(
+                "/images/deltarune-local/" + filename)) {
+            if (input == null) {
+                return null;
+            }
+            Image image = new Image(input);
+            return image.isError() ? null : image;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
     private static boolean contains(PatternBulletStyle style, int x, int y) {
         int dx = Math.abs(x - 6);
         int dy = Math.abs(y - 6);
@@ -57,6 +83,7 @@ final class PatternBulletImages {
             case ORB -> dx * dx + dy * dy <= 25;
             case CAROUSEL -> (dx <= 2 && dy <= 5) || (dy <= 2 && dx <= 5);
             case SCYTHE -> (dx <= 1 && y >= 2 && y <= 11) || (y <= 4 && dx <= 5 - y);
+            case CLUB -> (dx <= 2 && dy <= 2) || (dx <= 1 && dy >= 2 && dy <= 5);
         };
     }
 
@@ -67,6 +94,7 @@ final class PatternBulletImages {
             case ORB -> Color.rgb(255, 225, 112);
             case CAROUSEL -> Color.rgb(203, 126, 39);
             case SCYTHE -> Color.rgb(190, 48, 63);
+            case CLUB -> Color.rgb(41, 39, 54);
         };
     }
 
@@ -77,6 +105,7 @@ final class PatternBulletImages {
             case ORB -> Color.rgb(255, 248, 206);
             case CAROUSEL -> Color.rgb(255, 216, 132);
             case SCYTHE -> Color.rgb(255, 145, 154);
+            case CLUB -> Color.rgb(231, 228, 238);
         };
     }
 }

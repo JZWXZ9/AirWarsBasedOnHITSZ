@@ -30,10 +30,12 @@ public class BossFactory extends AbstractEnemyFactory{
 
     @Override
     public AbstractEnemyAircraft createEnemy() {
-        int y = (int) (random.nextDouble() * Main.WINDOW_HEIGHT * 0.05);
-        AbstractBossEnemy boss = definition.creator().create(0, y, speedX, speedY, hp);
-        int maxX = Math.max(0, Main.WINDOW_WIDTH - boss.getWidth());
-        boss.setLocation((int) (random.nextDouble() * (maxX + 1)), y);
+        AbstractBossEnemy boss = definition.creator().create(0, 0, speedX, speedY, hp);
+        int halfWidth = boss.getWidth() / 2;
+        int availableWidth = Math.max(1, Main.WINDOW_WIDTH - boss.getWidth());
+        int x = halfWidth + random.nextInt(availableWidth);
+        int y = boss.getHeight() / 2 + 20;
+        boss.setLocation(x, y);
         return boss;
     }
 

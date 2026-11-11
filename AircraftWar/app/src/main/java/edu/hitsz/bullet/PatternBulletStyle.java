@@ -5,5 +5,6 @@ public enum PatternBulletStyle {
     SPADE,
     ORB,
     CAROUSEL,
-    SCYTHE
+    SCYTHE,
+    CLUB
 }

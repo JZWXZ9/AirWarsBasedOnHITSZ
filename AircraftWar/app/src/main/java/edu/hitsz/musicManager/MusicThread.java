@@ -7,18 +7,16 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-/** Plays a classpath audio resource once or on a loop and releases its audio line on stop. */
+/** Streams classpath audio resources and releases its audio line on stop. */
 public class MusicThread extends Thread {
     private final String filename;
     private final Object lineLock = new Object();
+    private URL resource;
     private AudioFormat audioFormat;
-    private byte[] samples;
     private volatile boolean isLooping;
     private volatile boolean isRunning = true;
     private SourceDataLine dataLine;
@@ -42,50 +40,80 @@ public class MusicThread extends Thread {
         isLooping = false;
     }
 
+    /** Resolve and inspect the audio header without decoding the whole track into heap memory. */
     public void loadMusic() {
-        URL resource = getClass().getResource(filename);
+        resource = getClass().getResource(filename);
         if (resource == null) {
             isRunning = false;
             System.err.println("Audio resource not found: " + filename);
             return;
         }
 
-        try (AudioInputStream stream = AudioSystem.getAudioInputStream(resource);
-             ByteArrayOutputStream audioData = new ByteArrayOutputStream()) {
-            audioFormat = stream.getFormat();
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = stream.read(buffer)) != -1) {
-                audioData.write(buffer, 0, bytesRead);
-            }
-            samples = audioData.toByteArray();
-            if (samples.length == 0) {
-                isRunning = false;
-            }
-        } catch (UnsupportedAudioFileException | IOException e) {
+        try (AudioInputStream encodedStream = AudioSystem.getAudioInputStream(resource);
+             AudioInputStream pcmStream = toPcmStream(encodedStream)) {
+            audioFormat = pcmStream.getFormat();
+        } catch (UnsupportedAudioFileException | IOException | IllegalArgumentException e) {
             isRunning = false;
             System.err.println("Could not load audio resource " + filename + ": " + e.getMessage());
         }
     }
 
+    private static AudioInputStream toPcmStream(AudioInputStream source) {
+        AudioFormat sourceFormat = source.getFormat();
+        AudioFormat.Encoding encoding = sourceFormat.getEncoding();
+        if (AudioFormat.Encoding.PCM_SIGNED.equals(encoding)
+                || AudioFormat.Encoding.PCM_UNSIGNED.equals(encoding)) {
+            return source;
+        }
+
+        int channels = Math.max(1, sourceFormat.getChannels());
+        float sampleRate = sourceFormat.getSampleRate();
+        AudioFormat pcmFormat = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                sampleRate,
+                16,
+                channels,
+                channels * 2,
+                sampleRate,
+                false);
+        return AudioSystem.getAudioInputStream(pcmFormat, source);
+    }
+
     public void play(InputStream source) {
-        playStream(source);
+        if (source == null) return;
+        try (AudioInputStream encodedStream = AudioSystem.getAudioInputStream(source);
+             AudioInputStream pcmStream = toPcmStream(encodedStream)) {
+            audioFormat = pcmStream.getFormat();
+            if (!playStream(pcmStream)) {
+                isRunning = false;
+            }
+        } catch (UnsupportedAudioFileException | IOException | IllegalArgumentException e) {
+            isRunning = false;
+            System.err.println("Could not play audio resource " + filename + ": " + e.getMessage());
+        }
     }
 
     public void playLooping(InputStream ignoredSource) {
-        if (samples == null || audioFormat == null) {
+        if (!isRunning || resource == null || audioFormat == null) {
             return;
         }
+
         do {
-            if (!playStream(new ByteArrayInputStream(samples))) {
-                // A missing audio device must end playback instead of spinning in a retry loop.
+            try (AudioInputStream encodedStream = AudioSystem.getAudioInputStream(resource);
+                 AudioInputStream pcmStream = toPcmStream(encodedStream)) {
+                if (!playStream(pcmStream)) {
+                    isRunning = false;
+                    return;
+                }
+            } catch (UnsupportedAudioFileException | IOException | IllegalArgumentException e) {
                 isRunning = false;
+                System.err.println("Could not play audio resource " + filename + ": " + e.getMessage());
                 return;
             }
         } while (isLooping && isRunning);
     }
 
-    private boolean playStream(InputStream source) {
+    private boolean playStream(AudioInputStream source) {
         if (!isRunning || source == null || audioFormat == null) {
             return false;
         }
@@ -106,7 +134,7 @@ public class MusicThread extends Thread {
             }
 
             line.start();
-            byte[] buffer = new byte[bufferSize];
+            byte[] buffer = new byte[8192];
             int bytesRead;
             while (isRunning && (bytesRead = source.read(buffer, 0, buffer.length)) != -1) {
                 int bytesWritten = 0;

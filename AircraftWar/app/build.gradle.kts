@@ -31,6 +31,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    // Java Sound SPI support for the game's Ogg Vorbis music tracks.
+    implementation("dev.mccue:vorbisspi:2024.04.19")
 }
 
 javafx {

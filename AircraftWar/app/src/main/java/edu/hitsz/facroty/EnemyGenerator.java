@@ -2,6 +2,7 @@ package edu.hitsz.facroty;
 
 import edu.hitsz.aircraft.AbstractEnemyAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
+import edu.hitsz.enums.DifficultyEnums;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,9 +30,13 @@ public class EnemyGenerator {
     }
 
     public AbstractEnemyAircraft generateEnemy(int difficultyFactor) {
+        return generateEnemy(difficultyFactor, DifficultyEnums.NORMAL);
+    }
+
+    public AbstractEnemyAircraft generateEnemy(int difficultyFactor, DifficultyEnums difficulty) {
         AbstractEnemyAircraft enemy = null;
         for(AbstractEnemyFactory factory: FACTORY) {
-            enemy = factory.createEnemyByProbability(difficultyFactor);
+            enemy = factory.createEnemyByProbability(difficultyFactor, difficulty);
             if (enemy != null) {
                 break;
             }

@@ -2,6 +2,7 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.props.AbstractProps;
 import edu.hitsz.props.PropsFactory;
+import edu.hitsz.application.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,19 @@ public abstract class AbstractBossEnemy extends AbstractEnemyAircraft implements
         super(locationX, locationY, speedX, speedY, hp);
         this.score = score;
         this.shootCycle = 0;
+    }
+
+    @Override
+    public void forward() {
+        int halfWidth = getWidth() / 2;
+        locationX += speedX;
+        if (locationX <= halfWidth) {
+            locationX = halfWidth;
+            speedX = Math.abs(speedX);
+        } else if (locationX >= Main.WINDOW_WIDTH - halfWidth) {
+            locationX = Main.WINDOW_WIDTH - halfWidth;
+            speedX = -Math.abs(speedX);
+        }
     }
 
     @Override

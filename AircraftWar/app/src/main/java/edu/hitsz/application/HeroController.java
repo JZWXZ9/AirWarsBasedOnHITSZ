@@ -1,35 +1,47 @@
 package edu.hitsz.application;
 
 import edu.hitsz.aircraft.HeroAircraft;
-
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
-/**
- * 英雄机控制类
- * 监听鼠标，控制英雄机的移动
- * @author hitsz
- */
-public class HeroController {
+/** Moves the soul with the mouse, within the current play area. */
+public final class HeroController {
     private final HeroAircraft heroAircraft;
+    private final Node inputNode;
+    private double minX;
+    private double minY;
+    private double maxX = Main.WINDOW_WIDTH;
+    private double maxY = Main.WINDOW_HEIGHT;
 
-    public HeroController(Node inputNode, HeroAircraft heroAircraft){
+    public HeroController(Node inputNode, HeroAircraft heroAircraft) {
+        this.inputNode = inputNode;
         this.heroAircraft = heroAircraft;
-
-        // 事件监听器
         inputNode.addEventHandler(MouseEvent.MOUSE_MOVED, this::handleMouse);
-        // 监听鼠标左右键,Lambda表达式
         inputNode.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouse);
     }
 
-    private void handleMouse(MouseEvent e) {
-        double x = e.getX();
-        double y = e.getY();
-        if (x < 0 || x > Main.WINDOW_WIDTH || y < 0 || y > Main.WINDOW_HEIGHT) {
-            return;
-        }
-        heroAircraft.setLocation(x, y);
+    public void setMovementBounds(double minX, double minY, double maxX, double maxY) {
+        this.minX = minX;
+        this.minY = minY;
+        this.maxX = maxX;
+        this.maxY = maxY;
+        moveTo(heroAircraft.getLocationX(), heroAircraft.getLocationY());
     }
 
+    private void handleMouse(MouseEvent event) {
+        Point2D position = inputNode.sceneToLocal(event.getSceneX(), event.getSceneY());
+        moveTo(position.getX(), position.getY());
+    }
 
+    private void moveTo(double x, double y) {
+        double halfWidth = heroAircraft.getWidth() / 2.0;
+        double halfHeight = heroAircraft.getHeight() / 2.0;
+        heroAircraft.setLocation(clamp(x, minX + halfWidth, maxX - halfWidth),
+                clamp(y, minY + halfHeight, maxY - halfHeight));
+    }
+
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
 }
